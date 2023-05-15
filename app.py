@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.root import rootRoute
+from routes.conductor_rutas import ruta_conductor
 
 app = FastAPI(
     title='GESIVE API REST SERVICE',
@@ -17,3 +18,4 @@ app.add_middleware(
 )
 
 app.include_router(rootRoute)
+app.include_router(ruta_conductor)
