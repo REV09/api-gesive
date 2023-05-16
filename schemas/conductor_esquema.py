@@ -14,4 +14,4 @@ conductores = Table('conductor', meta,
                     )
 
 motorBd = motor()
-meta.create_all(motor)
+meta.create_all(motorBd)

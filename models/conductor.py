@@ -1,11 +1,14 @@
 from pydantic import BaseModel
-import datetime
+from datetime import date
 
 
 class Conductor(BaseModel):
     idConductor: int
     nombreCompleto: str
     numLicencia: str
-    fechaNacimiento: datetime
+    fechaNacimiento: date
     telefono: str
     contrasena: str
+
+    class Config:
+        orm_mode = True

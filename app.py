@@ -2,11 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.root import rootRoute
 from routes.conductor_rutas import ruta_conductor
+from routes.vehiculo_rutas import ruta_vehiculo
 
 app = FastAPI(
     title='GESIVE API REST SERVICE',
     description= 'API REST Services for GESIVE clients',
-    openapi_tags=[{}]
+    openapi_tags=[{
+        'name':'Conductor',
+        'description': 'rutas de servicios REST para conductor'},
+        {'name': 'Vehiculo',
+         'description': 'rutas de servicios REST para vehiculo'}]
 )
 
 app.add_middleware(
@@ -19,3 +24,4 @@ app.add_middleware(
 
 app.include_router(rootRoute)
 app.include_router(ruta_conductor)
+app.include_router(ruta_vehiculo)
