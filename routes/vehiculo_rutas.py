@@ -41,7 +41,7 @@ def actualizar_vehiculo(vehiculo: Vehiculo, id_vehiculo: int):
         modelo = vehiculo.modelo,
         color = vehiculo.color,
         numPlacas = vehiculo.numPlacas
-    ).where(vehiculo.c.idVehiculo == id_vehiculo))
+    ).where(vehiculos.c.idVehiculo == id_vehiculo))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)

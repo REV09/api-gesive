@@ -1,0 +1,64 @@
+from fastapi import APIRouter, HTTPException, Response
+from models.pago import Pago
+from config.db import conexionDb
+from schemas.pago_esquema import pagos
+from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+
+
+ruta_pagos = APIRouter()
+
+@ruta_pagos.get('/pago', response_model=Pago, tags=["Pago"])
+def obtener_vehiculo(id_pago: int):
+    conexion = conexionDb()
+    resultado = conexion.execute(pagos.select().where(
+        pagos.c.idPago == id_pago)).first()
+    conexion.close()
+    if resultado:
+        return resultado
+    
+    raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
+
+
+@ruta_pagos.post('/pago', status_code=HTTP_200_OK, tags=["Pago"])
+def agregar_vehiculo(pago: Pago):
+    conexion = conexionDb()
+    resultado = conexion.execute(pagos.insert().values(pago))
+    conexion.close()
+    if resultado:
+        return Response(status_code=HTTP_200_OK)
+    
+    raise HTTPException(status_code=500, detail="Error del servidor al registrar vehiculo")
+
+
+@ruta_pagos.put('/pago', status_code=HTTP_200_OK, tags=["Pago"])
+def actualizar_vehiculo(pago: Pago, id_pago: int):
+    conexion = conexionDb()
+    resultado = conexion.execute(pagos.update().values(
+        idPago = id_pago,
+        idPoliza = pago.idPoliza,
+        idConductor = pago.idConductor,
+        monto = pago.monto,
+        fecha = pago.fecha,
+        formaDePago = pago.formaDePago,
+        numeroTarjeta = pago.numeroTarjeta,
+        fechaVencimiento = pago.fechaVencimiento,
+        cvv = pago.cvv
+    ).where(pagos.c.idVehiculo == id_pago))
+    conexion.close()
+    if resultado:
+        return Response(status_code=HTTP_200_OK)
+    
+    raise HTTPException(status_code=500, detail="Error del servidor al actualizar vehiculo")
+
+
+@ruta_pagos.delete('/pago', status_code=HTTP_204_NO_CONTENT, tags=["Pago"])
+def eliminar_vehiculo(id_pago: int):
+    conexion = conexionDb()
+    resultado = conexion.execute(pagos.delete().where(
+        pagos.c.idPago == id_pago))
+    conexion.close()
+    if resultado:
+        return Response(status_code=HTTP_204_NO_CONTENT)
+    
+    raise HTTPException(status_code=500, detail="Error del servidor al eliminar vehiculo")
+ 
