@@ -16,7 +16,7 @@ def obtener_vehiculo(id_pago: int):
     if resultado:
         return resultado
     
-    raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
+    raise HTTPException(status_code=404, detail="Pago no encontrado")
 
 
 @ruta_pagos.post('/pago', status_code=HTTP_200_OK, tags=["Pago"])
@@ -27,7 +27,7 @@ def agregar_vehiculo(pago: Pago):
     if resultado:
         return Response(status_code=HTTP_200_OK)
     
-    raise HTTPException(status_code=500, detail="Error del servidor al registrar vehiculo")
+    raise HTTPException(status_code=500, detail="Error del servidor al registrar Pago")
 
 
 @ruta_pagos.put('/pago', status_code=HTTP_200_OK, tags=["Pago"])
@@ -48,7 +48,7 @@ def actualizar_vehiculo(pago: Pago, id_pago: int):
     if resultado:
         return Response(status_code=HTTP_200_OK)
     
-    raise HTTPException(status_code=500, detail="Error del servidor al actualizar vehiculo")
+    raise HTTPException(status_code=500, detail="Error del servidor al actualizar Pago")
 
 
 @ruta_pagos.delete('/pago', status_code=HTTP_204_NO_CONTENT, tags=["Pago"])
@@ -60,5 +60,5 @@ def eliminar_vehiculo(id_pago: int):
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)
     
-    raise HTTPException(status_code=500, detail="Error del servidor al eliminar vehiculo")
+    raise HTTPException(status_code=500, detail="Error del servidor al eliminar Pago")
  
