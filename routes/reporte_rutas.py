@@ -19,6 +19,17 @@ def obtener_reporte(id_reporte: int):
     raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
 
+@ruta_reporte.get('/reportes', response_model=list[Reporte], tags=["Reporte"])
+def obtener_reportes():
+    conexion = conexionDb()
+    resultados = conexion.execute(reportes.select()).fetchall()
+    conexion.close()
+    if resultados:
+        return resultados
+    
+    raise HTTPException(status_code=404, detail="No se encontraron reportes")
+
+
 @ruta_reporte.post('/reporte', status_code=HTTP_200_OK, tags=["Reporte"])
 def agregar_reporte(reporte: Reporte):
     conexion = conexionDb()

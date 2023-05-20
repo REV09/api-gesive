@@ -54,6 +54,22 @@ def agregar_conductor(conductor: Conductor):
     raise HTTPException(status_code=500, detail='Error de registro en el servidor')
 
 
+@ruta_conductor.post('/authConductor', status_code=HTTP_200_OK, tags=["Conductor"])
+def autenticar_conductor(conductor: Conductor):
+    conexion = conexionDb()
+    resultado = conexion.execute(conductores.select().where(
+        conductores.c.telefono == conductor.telefono)).first()
+    if resultado:
+        conductorObtenido: Conductor = resultado
+
+        if conductor.contrasena == conductorObtenido.contrasena:
+            return Response(status_code=HTTP_200_OK)
+        
+        raise HTTPException(status_code=401, detail="Conductor no valido")
+    
+    raise HTTPException(status_code=500, detail="Conductor solicitado no encontrado")
+
+
 @ruta_conductor.put('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def actualizar_conductor(conductor: Conductor, id_conductor: int):
 

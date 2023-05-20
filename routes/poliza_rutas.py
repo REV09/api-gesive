@@ -19,6 +19,17 @@ def obtener_poliza(id_poliza: int):
     raise HTTPException(status_code=404, detail="poliza no encontrada")
 
 
+@ruta_poliza.get('/polizas', response_model=list[Poliza], tags=["Poliza"])
+def obtener_polizas():
+    conexion = conexionDb()
+    resultados = conexion.execute(polizas.select()).fetchall()
+    conexion.close()
+    if resultados:
+        return resultados
+    
+    raise HTTPException(status_code=404, detail="No se encontraron polizas")
+
+
 @ruta_poliza.post('/poliza', status_code=HTTP_200_OK, tags=["Poliza"])
 def agregar_poliza(poliza: Poliza):
     conexion = conexionDb()

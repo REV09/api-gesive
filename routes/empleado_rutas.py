@@ -30,6 +30,22 @@ def agregar_empleado(empleado: Empleado):
     raise HTTPException(status_code=500, detail="Error del servidor al registrar empleado")
 
 
+@ruta_empleado.post('/authEmpleado', status_code=HTTP_200_OK, tags=["Empleado"])
+def autenticar_empleado(empleado: Empleado):
+    conexion = conexionDb()
+    resultado = conexion.execute(empleados.select().where(
+        empleados.c.nombreUsuario == empleado.nombreUsuario)).first()
+    if resultado:
+        empleadoObtenido: Empleado = resultado
+
+        if empleado.contrasena == empleadoObtenido.contrasena:
+            return Response(status_code=HTTP_200_OK)
+        
+        raise HTTPException(status_code=401, detail="Empleado no valido")
+    
+    raise HTTPException(status_code=500, detail="Empleado solicitado no encontrado")
+
+
 @ruta_empleado.put('/empleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def actualizar_empleado(empleado: Empleado, id_empleado: int):
     conexion = conexionDb()
