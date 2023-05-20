@@ -22,7 +22,7 @@ def obtener_empleado(id_empleado: int):
 @ruta_empleado.post('/empleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def agregar_empleado(empleado: Empleado):
     conexion = conexionDb()
-    resultado = conexion.execute(empleados.insert().values(empleado))
+    resultado = conexion.execute(empleados.insert().values(empleado.dict()))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -40,7 +40,7 @@ def actualizar_empleado(empleado: Empleado, id_empleado: int):
         cargo = empleado.cargo,
         nombreUsuario = empleado.nombreUsuario,
         contrasena = empleado.contrasena
-    ).where(empleados.c.idConductor == id_empleado))
+    ).where(empleados.c.idEmpleado == id_empleado))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)

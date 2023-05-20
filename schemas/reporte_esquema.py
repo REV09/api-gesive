@@ -6,6 +6,7 @@ meta = MetaData()
 
 reportes = Table('reporte', meta,
                  Column('idReporte', Integer, primary_key=True),
+                 Column('idPoliza', Integer),
                  Column('posicionLat', Float),
                  Column('posicionLon', Float),
                  Column('involucradosNombres', String(45)),

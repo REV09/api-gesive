@@ -8,10 +8,10 @@ from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 ruta_poliza = APIRouter()
 
 @ruta_poliza.get('/poliza', response_model=Poliza, tags=["Poliza"])
-def obtener_vehiculo(id_poliza: int):
+def obtener_poliza(id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.select().where(
-        polizas.c.idVehiculo == id_poliza)).first()
+        polizas.c.idPoliza == id_poliza)).first()
     conexion.close()
     if resultado:
         return resultado
@@ -20,9 +20,9 @@ def obtener_vehiculo(id_poliza: int):
 
 
 @ruta_poliza.post('/poliza', status_code=HTTP_200_OK, tags=["Poliza"])
-def agregar_vehiculo(poliza: Poliza):
+def agregar_poliza(poliza: Poliza):
     conexion = conexionDb()
-    resultado = conexion.execute(polizas.insert().values(poliza))
+    resultado = conexion.execute(polizas.insert().values(poliza.dict()))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -31,7 +31,7 @@ def agregar_vehiculo(poliza: Poliza):
 
 
 @ruta_poliza.put('/poliza', status_code=HTTP_200_OK, tags=["Poliza"])
-def actualizar_vehiculo(poliza: Poliza, id_poliza: int):
+def actualizar_poliza(poliza: Poliza, id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.update().values(
         idPoliza = id_poliza,
@@ -51,7 +51,7 @@ def actualizar_vehiculo(poliza: Poliza, id_poliza: int):
 
 
 @ruta_poliza.delete('/poliza', status_code=HTTP_204_NO_CONTENT, tags=["Poliza"])
-def eliminar_vehiculo(id_poliza: int):
+def eliminar_poliza(id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.delete().where(
         polizas.c.idPoliza == id_poliza))

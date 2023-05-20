@@ -22,7 +22,7 @@ def obtener_vehiculo(id_vehiculo: int):
 @ruta_vehiculo.post('/vehiculo', status_code=HTTP_200_OK, tags=["Vehiculo"])
 def agregar_vehiculo(vehiculo: Vehiculo):
     conexion = conexionDb()
-    resultado = conexion.execute(vehiculos.insert().values(vehiculo))
+    resultado = conexion.execute(vehiculos.insert().values(vehiculo.dict()))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -53,7 +53,7 @@ def actualizar_vehiculo(vehiculo: Vehiculo, id_vehiculo: int):
 def eliminar_vehiculo(id_vehiculo: int):
     conexion = conexionDb()
     resultado = conexion.execute(vehiculos.delete().where(
-        vehiculos.c.idConductor == id_vehiculo))
+        vehiculos.c.idVehiculo == id_vehiculo))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

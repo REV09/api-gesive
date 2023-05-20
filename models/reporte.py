@@ -4,6 +4,7 @@ from datetime import date
 
 class Reporte(BaseModel):
     idReporte: int
+    idPoliza: int
     posicionLat: float
     posicionLon: float
     involucradosNombres: str
@@ -15,3 +16,6 @@ class Reporte(BaseModel):
     dictamenFecha: date
     dictamenHora: str
     dictamenFolio: str
+
+    class Config:
+        orm_mode = True

@@ -46,7 +46,7 @@ def agregar_conductor(conductor: Conductor):
     '''
 
     conexion = conexionDb()
-    resultado = conexion.execute(conductores.insert().values(conductor))
+    resultado = conexion.execute(conductores.insert().values(conductor.dict()))
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
