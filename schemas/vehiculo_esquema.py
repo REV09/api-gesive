@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 vehiculos = Table('vehiculo', meta,
-                  Column('idVehiculo', Integer, primary_key=True),
+                  Column('idvehiculo', Integer, primary_key=True),
                   Column('numeroSerie', String(20)),
                   Column('anio', Integer),
                   Column('marca', String(20)),

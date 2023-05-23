@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 conductores = Table('conductor', meta,
-                    Column('idConductor', Integer, primary_key=True),
+                    Column('idconductor', Integer, primary_key=True),
                     Column('nombreCompleto', String(90)),
                     Column('numLicencia', String(25)),
                     Column('fechaNacimiento', Date),
