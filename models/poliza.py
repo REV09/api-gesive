@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import date
 
 class Poliza(BaseModel):
-    idPoliza: int
+    idpoliza: int
     idConductor: int
     idVehiculo: int
     fechaInicio: date

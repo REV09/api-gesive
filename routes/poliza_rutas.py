@@ -11,7 +11,7 @@ ruta_poliza = APIRouter()
 def obtener_poliza(id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.select().where(
-        polizas.c.idPoliza == id_poliza)).first()
+        polizas.c.idpoliza == id_poliza)).first()
     conexion.close()
     if resultado:
         return resultado
@@ -34,6 +34,7 @@ def obtener_polizas():
 def agregar_poliza(poliza: Poliza):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.insert().values(poliza.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -45,7 +46,7 @@ def agregar_poliza(poliza: Poliza):
 def actualizar_poliza(poliza: Poliza, id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.update().values(
-        idPoliza = id_poliza,
+        idpoliza = id_poliza,
         idConductor = poliza.idConductor,
         idVehiculo = poliza.idVehiculo,
         fechaInicio = poliza.fechaInicio,
@@ -53,7 +54,8 @@ def actualizar_poliza(poliza: Poliza, id_poliza: int):
         tipoCobertura = poliza.tipoCobertura,
         costo = poliza.costo,
         fechaFin = poliza.fechaFin
-    ).where(polizas.c.idPoliza == id_poliza))
+    ).where(polizas.c.idpoliza == id_poliza))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -65,7 +67,8 @@ def actualizar_poliza(poliza: Poliza, id_poliza: int):
 def eliminar_poliza(id_poliza: int):
     conexion = conexionDb()
     resultado = conexion.execute(polizas.delete().where(
-        polizas.c.idPoliza == id_poliza))
+        polizas.c.idpoliza == id_poliza))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

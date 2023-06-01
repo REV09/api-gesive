@@ -23,6 +23,7 @@ def obtener_pago(id_pago: int):
 def agregar_pago(pago: Pago):
     conexion = conexionDb()
     resultado = conexion.execute(pagos.insert().values(pago.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -44,6 +45,7 @@ def actualizar_pago(pago: Pago, id_pago: int):
         fechaVencimiento = pago.fechaVencimiento,
         cvv = pago.cvv
     ).where(pagos.c.idPago == id_pago))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -56,6 +58,7 @@ def eliminar_pago(id_pago: int):
     conexion = conexionDb()
     resultado = conexion.execute(pagos.delete().where(
         pagos.c.idPago == id_pago))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

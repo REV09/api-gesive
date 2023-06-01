@@ -18,11 +18,22 @@ def obtener_empleado(id_empleado: int):
     
     raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
+@ruta_empleado.get('/empleados', response_model=list[Empleado], tags=["Empleado"])
+def obtener_empleados():
+    conexion = conexionDb()
+    resultados = conexion.execute(empleados.select()).fetchall()
+    conexion.close()
+    if resultados:
+        return resultados
+    
+    raise HTTPException(status_code=404, detail="No se encontraron empleados")
+
 
 @ruta_empleado.post('/empleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def agregar_empleado(empleado: Empleado):
     conexion = conexionDb()
     resultado = conexion.execute(empleados.insert().values(empleado.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -57,6 +68,7 @@ def actualizar_empleado(empleado: Empleado, id_empleado: int):
         nombreUsuario = empleado.nombreUsuario,
         contrasena = empleado.contrasena
     ).where(empleados.c.idEmpleado == id_empleado))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -70,6 +82,7 @@ def eliminar_empleado(id_empleado: str):
     resultado = conexion.execute(empleados.delete().where(
         empleados.c.idEmpleado == id_empleado))
     conexion.close()
+    conexion.commit()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)
     

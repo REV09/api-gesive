@@ -11,7 +11,7 @@ ruta_vehiculo = APIRouter()
 def obtener_vehiculo(id_vehiculo: int):
     conexion = conexionDb()
     resultado = conexion.execute(vehiculos.select().where(
-        vehiculos.c.idVehiculo == id_vehiculo)).first()
+        vehiculos.c.idvehiculo == id_vehiculo)).first()
     conexion.close()
     if resultado:
         return resultado
@@ -23,6 +23,7 @@ def obtener_vehiculo(id_vehiculo: int):
 def agregar_vehiculo(vehiculo: Vehiculo):
     conexion = conexionDb()
     resultado = conexion.execute(vehiculos.insert().values(vehiculo.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -34,14 +35,15 @@ def agregar_vehiculo(vehiculo: Vehiculo):
 def actualizar_vehiculo(vehiculo: Vehiculo, id_vehiculo: int):
     conexion = conexionDb()
     resultado = conexion.execute(vehiculos.update().values(
-        idVehiculo = id_vehiculo,
+        idvehiculo = id_vehiculo,
         numeroSerie = vehiculo.numeroSerie,
         anio = vehiculo.anio,
         marca = vehiculo.marca,
         modelo = vehiculo.modelo,
         color = vehiculo.color,
         numPlacas = vehiculo.numPlacas
-    ).where(vehiculos.c.idVehiculo == id_vehiculo))
+    ).where(vehiculos.c.idvehiculo == id_vehiculo))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -53,7 +55,8 @@ def actualizar_vehiculo(vehiculo: Vehiculo, id_vehiculo: int):
 def eliminar_vehiculo(id_vehiculo: int):
     conexion = conexionDb()
     resultado = conexion.execute(vehiculos.delete().where(
-        vehiculos.c.idVehiculo == id_vehiculo))
+        vehiculos.c.idvehiculo == id_vehiculo))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

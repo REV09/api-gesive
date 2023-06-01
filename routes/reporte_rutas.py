@@ -34,6 +34,7 @@ def obtener_reportes():
 def agregar_reporte(reporte: Reporte):
     conexion = conexionDb()
     resultado = conexion.execute(reportes.insert().values(reporte.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -59,6 +60,7 @@ def actualizar_reporte(reporte: Reporte, id_reporte: int):
         dictamenHora = reporte.dictamenHora,
         dictamenFolio = reporte.dictamenFolio
     ).where(reportes.c.idReporte == id_reporte))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -71,6 +73,7 @@ def eliminar_reporte(id_reporte: int):
     conexion = conexionDb()
     resultado = conexion.execute(reportes.delete().where(
         reportes.c.idReporte == id_reporte))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

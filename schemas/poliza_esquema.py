@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 polizas = Table('poliza', meta,
-                Column('idPoliza', Integer, primary_key=True),
+                Column('idpoliza', Integer, primary_key=True),
                 Column('idConductor', Integer),
                 Column('idVehiculo', Integer),
                 Column('fechaInicio', Date),

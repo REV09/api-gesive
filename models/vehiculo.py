@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class Vehiculo(BaseModel):
-    idVehiculo: int
+    idvehiculo: int
     numeroSerie: str
     anio: int
     marca: str

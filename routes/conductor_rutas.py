@@ -47,6 +47,7 @@ def agregar_conductor(conductor: Conductor):
 
     conexion = conexionDb()
     resultado = conexion.execute(conductores.insert().values(conductor.dict()))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -85,13 +86,14 @@ def actualizar_conductor(conductor: Conductor, id_conductor: int):
 
     conexion = conexionDb()
     resultado = conexion.execute(conductores.update().values(
-        idConductor = id_conductor,
+        idconductor = id_conductor,
         nombreCompleto = conductor.nombreCompleto,
         numLicencia = conductor.numLicencia,
         fechaNacimiento = conductor.fechaNacimiento,
         telefono = conductor.telefono,
         contrasena = conductor.contrasena
-    ).where(conductores.c.idConductor == id_conductor))
+    ).where(conductores.c.idconductor == id_conductor))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
@@ -113,7 +115,8 @@ def eliminar_conductor(id_conductor: int):
 
     conexion = conexionDb()
     resultado = conexion.execute(conductores.delete().where(
-        conductores.c.idConductor == id_conductor))
+        conductores.c.idconductor == id_conductor))
+    conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)

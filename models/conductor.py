@@ -3,7 +3,7 @@ from datetime import date
 
 
 class Conductor(BaseModel):
-    idConductor: int
+    idconductor: int
     nombreCompleto: str
     numLicencia: str
     fechaNacimiento: date
