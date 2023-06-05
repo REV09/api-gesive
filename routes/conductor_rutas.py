@@ -3,9 +3,9 @@ from models.conductor import Conductor
 from config.db import conexionDb
 from schemas.conductor_esquema import conductores
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_200_OK
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
-
-ruta_conductor = APIRouter()
+ruta_conductor = APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_conductor.get('/conductor', response_model=Conductor, tags=["Conductor"])
 def obtener_conductor(id_conductor: int):
@@ -24,7 +24,7 @@ def obtener_conductor(id_conductor: int):
 
     conexion = conexionDb()
     resultado = conexion.execute(conductores.select().where(
-        conductores.c.idConductor == id_conductor)).first()
+        conductores.c.idconductor == id_conductor)).first()
     conexion.close()
     if resultado:
         return resultado

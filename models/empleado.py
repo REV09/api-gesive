@@ -1,10 +1,9 @@
 from pydantic import BaseModel
-from datetime import date
 
 class Empleado(BaseModel):
     idEmpleado: int
     nombreCompleto: str
-    fechaIngreso: date
+    fechaIngreso: str
     cargo: str
     nombreUsuario: str
     contrasena: str

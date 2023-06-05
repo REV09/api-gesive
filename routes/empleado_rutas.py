@@ -3,9 +3,9 @@ from models.empleado import Empleado
 from config.db import conexionDb
 from schemas.empleado_esquema import empleados
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_200_OK
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
-
-ruta_empleado =  APIRouter()
+ruta_empleado =  APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_empleado.get('/empleado', response_model=Empleado, tags=["Empleado"])
 def obtener_empleado(id_empleado: int):
