@@ -57,6 +57,22 @@ def agregar_conductor(conductor: Conductor):
 
 @ruta_conductor.post('/authConductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def autenticar_conductor(conductor: Conductor):
+
+    '''
+    Este metodo se encarga de autenticar que se reciba un conductor
+    valido para el inicio de sesion.
+
+    En el caso de que el conductor sea valido el metodo retornara
+    un codigo HTTP 200.
+
+    En el caso de no encontrar al conductor solicitado se retornara
+    un codigo 500 de que no se encontro al conductor solicitado.
+
+    En el caso de que el conductor se encontro pero no coincide la
+    contraseña otorgada se rectornara un http 401 con el mensaje
+    conductor no valido
+    '''
+
     conexion = conexionDb()
     resultado = conexion.execute(conductores.select().where(
         conductores.c.telefono == conductor.telefono)).first()
@@ -105,7 +121,7 @@ def actualizar_conductor(conductor: Conductor, id_conductor: int):
 def eliminar_conductor(id_conductor: int):
 
     '''
-    Ruta para la eliminiacion de un coductor de la base de datos dado el id del conductor.
+    Ruta para la eliminacion de un coductor de la base de datos dado el id del conductor.
 
     El id del conductor que recibe debe ser un tipo de dato int.
 
