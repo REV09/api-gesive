@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 empleados = Table('empleado', meta,
-                  Column('idEmpleado', Integer, primary_key=True),
+                  Column('idEmpleado', Integer, primary_key=True, autoincrement="auto"),
                   Column('nombreCompleto', String(255),),
                   Column('fechaIngreso', String(10),),
                   Column('cargo', String(255),), 

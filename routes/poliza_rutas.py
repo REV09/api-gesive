@@ -3,9 +3,10 @@ from models.poliza import Poliza
 from config.db import conexionDb
 from schemas.poliza_esquema import polizas
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
 
-ruta_poliza = APIRouter()
+ruta_poliza = APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_poliza.get('/poliza', response_model=Poliza, tags=["Poliza"])
 def obtener_poliza(id_poliza: int):

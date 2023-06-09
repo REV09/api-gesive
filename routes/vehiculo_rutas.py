@@ -3,9 +3,10 @@ from models.vehiculo import Vehiculo
 from config.db import conexionDb
 from schemas.vehiculo_esquema import vehiculos
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
 
-ruta_vehiculo = APIRouter()
+ruta_vehiculo = APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_vehiculo.get('/vehiculo', response_model=Vehiculo, tags=["Vehiculo"])
 def obtener_vehiculo(id_vehiculo: int):

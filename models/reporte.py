@@ -9,7 +9,7 @@ class Reporte(BaseModel):
     posicionLon: float
     involucradosNombres: str
     involucradosVehiculos: str
-    fotos: int
+    fotos: str
     idAjustador: int
     estatus: str
     dictamenTexto: str

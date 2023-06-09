@@ -3,9 +3,10 @@ from models.pago import Pago
 from config.db import conexionDb
 from schemas.pago_esquema import pagos
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
 
-ruta_pagos = APIRouter()
+ruta_pagos = APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_pagos.get('/pago', response_model=Pago, tags=["Pago"])
 def obtener_pago(id_pago: int):

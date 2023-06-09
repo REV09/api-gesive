@@ -3,9 +3,10 @@ from models.reporte import Reporte
 from config.db import conexionDb
 from schemas.reporte_esquema import reportes
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 
 
-ruta_reporte = APIRouter()
+ruta_reporte = APIRouter(route_class=VerificarTokenRutas)
 
 @ruta_reporte.get('/reporte', response_model=Reporte, tags=["Reporte"])
 def obtener_reporte(id_reporte: int):

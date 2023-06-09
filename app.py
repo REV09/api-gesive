@@ -8,6 +8,7 @@ from routes.empleado_rutas import ruta_empleado
 from routes.pago_rutas import ruta_pagos
 from routes.poliza_rutas import ruta_poliza
 from routes.reporte_rutas import ruta_reporte
+from routes.foto_rutas import ruta_foto
 
 app = FastAPI(
     title='GESIVE API REST SERVICE',
@@ -43,4 +44,5 @@ app.include_router(ruta_empleado)
 app.include_router(ruta_pagos)
 app.include_router(ruta_poliza)
 app.include_router(ruta_reporte)
+app.include_router(ruta_foto)
 load_dotenv()
