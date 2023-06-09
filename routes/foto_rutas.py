@@ -10,7 +10,7 @@ from images.convertir_fotos import obtener_binarios_fotos, crear_foto, guardar_f
 ruta_foto = APIRouter()
 
 @ruta_foto.get('/fotos', tags=["Foto"])
-def obtener_foto_reporte(id_reporte: int):
+def obtener_foto_reporte(id_foto: int):
 
     '''
     Ruta para obtener las fotos guardadas de un reporte.
@@ -24,7 +24,7 @@ def obtener_foto_reporte(id_reporte: int):
     '''
 
     conexion = conexionDb()
-    resultado = conexion.execute(fotos.select().where(fotos.c.idReporte == id_reporte)).first()
+    resultado = conexion.execute(fotos.select().where(fotos.c.idfoto == id_foto)).first()
     if resultado:
         guardar_foto(resultado[1])
         blob_foto = leer_foto()
