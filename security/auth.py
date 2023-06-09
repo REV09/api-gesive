@@ -1,7 +1,6 @@
 from jwt import encode, decode
 from jwt import exceptions
 from datetime import datetime, timedelta
-from os import getenv
 from fastapi.responses import JSONResponse
 from security.encriptacion import cargar_llave
 

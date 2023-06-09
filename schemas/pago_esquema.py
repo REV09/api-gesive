@@ -11,9 +11,9 @@ pagos = Table('pago', meta,
               Column('monto', Float),
               Column('fecha', Date),
               Column('formaDePago', Boolean),
-              Column('numeroTarjeta', String(24)),
-              Column('fechaVencimiento', String(6)),
-              Column('cvv', String(8)))
+              Column('numeroTarjeta', String(255)), 
+              Column('fechaVencimiento', String(255)), 
+              Column('cvv', String(255)))
 
 motorBd = motor()
 meta.create_all(motorBd)

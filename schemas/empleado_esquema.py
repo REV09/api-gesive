@@ -6,11 +6,11 @@ meta = MetaData()
 
 empleados = Table('empleado', meta,
                   Column('idEmpleado', Integer, primary_key=True),
-                  Column('nombreCompleto', String(45),),
+                  Column('nombreCompleto', String(255),),
                   Column('fechaIngreso', String(10),),
-                  Column('cargo', String(10),),
-                  Column('nombreUsuario', String(15),),
-                  Column('contrasena', String(90),))
+                  Column('cargo', String(255),), 
+                  Column('nombreUsuario', String(255),), 
+                  Column('contrasena', String(255),)) 
 
 motorBd = motor()
 meta.create_all(motorBd)

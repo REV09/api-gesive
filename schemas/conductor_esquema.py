@@ -6,11 +6,11 @@ meta = MetaData()
 
 conductores = Table('conductor', meta,
                     Column('idconductor', Integer, primary_key=True),
-                    Column('nombreCompleto', String(90)),
-                    Column('numLicencia', String(25)),
+                    Column('nombreCompleto', String(255)),
+                    Column('numLicencia', String(255)), 
                     Column('fechaNacimiento', Date),
-                    Column('telefono', String(15)),
-                    Column('contrasena', String(20))
+                    Column('telefono', String(255)), 
+                    Column('contrasena', String(255)) 
                     )
 
 motorBd = motor()
