@@ -3,13 +3,14 @@ from models.empleado import Empleado
 from config.db import conexionDb
 from schemas.empleado_esquema import empleados
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_200_OK
+from security.encriptacion import cargar_llave, desencriptar_contenido
 from middlewares.verificar_token_rutas import VerificarTokenRutas
 
-ruta_empleado =  APIRouter(route_class=VerificarTokenRutas)
+ruta_empleado = APIRouter(route_class=VerificarTokenRutas)
+
 
 @ruta_empleado.get('/empleado', response_model=Empleado, tags=["Empleado"])
 def obtener_empleado(id_empleado: int):
-
     '''
     Ruta para obtener informacion de un empleado especifico dado el id de 
     un empleado.
@@ -27,14 +28,16 @@ def obtener_empleado(id_empleado: int):
         empleados.c.idEmpleado == id_empleado)).first()
     conexion.close()
     if resultado:
-        return resultado
-    
+        empleadoObtenido = Empleado(
+            idEmpleado=resultado[0], nombreCompleto=resultado[1], fechaIngreso=resultado[2], cargo=resultado[3], nombreUsuario=resultado[4], contrasena=resultado[5])
+        empleadoObtenido.decodificar_informacion()
+        return empleadoObtenido
+
     raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
 
 @ruta_empleado.get('/empleados', response_model=list[Empleado], tags=["Empleado"])
 def obtener_empleados():
-
     '''
     Ruta para obtener todos los empleados registrados en la base de datos
 
@@ -43,17 +46,22 @@ def obtener_empleados():
     '''
 
     conexion = conexionDb()
+    empleados_obtenidos: list[Empleado] = []
     resultados = conexion.execute(empleados.select()).fetchall()
     conexion.close()
     if resultados:
-        return resultados
-    
+        for fila in resultados:
+            empleado_obtenido = Empleado(idEmpleado=fila[0], nombreCompleto=fila[1], fechaIngreso=fila[2], cargo=fila[3], nombreUsuario=fila[4], contrasena=fila[5])
+            empleado_obtenido.decodificar_informacion()
+            empleados_obtenidos.append(empleado_obtenido)
+
+        return empleados_obtenidos
+
     raise HTTPException(status_code=404, detail="No se encontraron empleados")
 
 
 @ruta_empleado.post('/empleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def agregar_empleado(empleado: Empleado):
-
     '''
     Ruta para agregar un empleado a la base de datos, recibe un \n
     objeto de tipo Empleado y lo agrega a la base de datos.\n
@@ -66,18 +74,19 @@ def agregar_empleado(empleado: Empleado):
     '''
 
     conexion = conexionDb()
+    empleado.codificar_informacion()
     resultado = conexion.execute(empleados.insert().values(empleado.dict()))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al registrar empleado")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al registrar empleado")
 
 
 @ruta_empleado.post('/authEmpleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def autenticar_empleado(empleado: Empleado):
-
     '''
     Este metodo se encarga de autenticar que se reciba un empleado
     valido para el inicio de sesion.
@@ -99,17 +108,21 @@ def autenticar_empleado(empleado: Empleado):
     if resultado:
         empleadoObtenido: Empleado = resultado
 
-        if empleado.contrasena == empleadoObtenido.contrasena:
+        llave = cargar_llave()
+        contrasena_obtenida = desencriptar_contenido(
+            empleadoObtenido.contrasena.encode(), llave)
+
+        if empleado.contrasena == contrasena_obtenida:
             return Response(status_code=HTTP_200_OK)
-        
+
         raise HTTPException(status_code=401, detail="Empleado no valido")
-    
-    raise HTTPException(status_code=500, detail="Empleado solicitado no encontrado")
+
+    raise HTTPException(
+        status_code=500, detail="Empleado solicitado no encontrado")
 
 
 @ruta_empleado.put('/empleado', status_code=HTTP_200_OK, tags=["Empleado"])
 def actualizar_empleado(empleado: Empleado, id_empleado: int):
-
     '''
     Ruta para actualizar la informacion de un empleado dado el id del empleado.
 
@@ -121,25 +134,26 @@ def actualizar_empleado(empleado: Empleado, id_empleado: int):
     '''
 
     conexion = conexionDb()
+    empleado.codificar_informacion()
     resultado = conexion.execute(empleados.update().values(
-        idEmpleado = id_empleado,
-        nombreCompleto = empleado.nombreCompleto,
-        fechaIngreso = empleado.fechaIngreso,
-        cargo = empleado.cargo,
-        nombreUsuario = empleado.nombreUsuario,
-        contrasena = empleado.contrasena
+        idEmpleado=id_empleado,
+        nombreCompleto=empleado.nombreCompleto,
+        fechaIngreso=empleado.fechaIngreso,
+        cargo=empleado.cargo,
+        nombreUsuario=empleado.nombreUsuario,
+        contrasena=empleado.contrasena
     ).where(empleados.c.idEmpleado == id_empleado))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al actualizar empleado")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al actualizar empleado")
 
 
 @ruta_empleado.delete('/empleado', status_code=HTTP_204_NO_CONTENT, tags=["Empleado"])
 def eliminar_empleado(id_empleado: str):
-
     '''
     Ruta para la eliminacion de un empleado de la base de datos dado el id del empleado.
 
@@ -156,5 +170,6 @@ def eliminar_empleado(id_empleado: str):
     conexion.commit()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al eliminar empleado")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al eliminar empleado")

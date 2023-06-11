@@ -1,5 +1,3 @@
-from images.convertir_fotos import obtener_binarios_fotos, crear_foto
+from images.convertir_fotos import obtener_binarios_fotos
 
-datos = obtener_binarios_fotos()
-crear_foto(datos)
-print("Foto creada")
+print(obtener_binarios_fotos())

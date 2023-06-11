@@ -1,15 +1,16 @@
 from fastapi import APIRouter, HTTPException, Response
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_200_OK
+from middlewares.verificar_token_rutas import VerificarTokenRutas
 from models.conductor import Conductor
 from config.db import conexionDb
 from schemas.conductor_esquema import conductores
-from starlette.status import HTTP_204_NO_CONTENT, HTTP_200_OK
-from middlewares.verificar_token_rutas import VerificarTokenRutas
+from security.encriptacion import cargar_llave, desencriptar_contenido
 
 ruta_conductor = APIRouter(route_class=VerificarTokenRutas)
 
+
 @ruta_conductor.get('/conductor', response_model=Conductor, tags=["Conductor"])
 def obtener_conductor(id_conductor: int):
-
     '''
     Ruta para obtener informacion de un conductor especifico dado el id de 
     un conductor.
@@ -27,14 +28,16 @@ def obtener_conductor(id_conductor: int):
         conductores.c.idconductor == id_conductor)).first()
     conexion.close()
     if resultado:
-        return resultado
-    
+        conductorObtenido = Conductor(
+            idconductor=resultado[0], nombreCompleto=resultado[1], numLicencia=resultado[2], fechaNacimiento=resultado[3], telefono=resultado[4], contrasena=resultado[5])
+        conductorObtenido.decodificar_informacion()
+        return conductorObtenido
+
     raise HTTPException(status_code=404, detail='Conductor no encontrado')
 
 
 @ruta_conductor.post('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def agregar_conductor(conductor: Conductor):
-
     '''
     Ruta para agregar un conductor a la base de datos.
 
@@ -46,18 +49,19 @@ def agregar_conductor(conductor: Conductor):
     '''
 
     conexion = conexionDb()
+    conductor.codificar_informacion()
     resultado = conexion.execute(conductores.insert().values(conductor.dict()))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail='Error de registro en el servidor')
+
+    raise HTTPException(
+        status_code=500, detail='Error de registro en el servidor')
 
 
 @ruta_conductor.post('/authConductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def autenticar_conductor(conductor: Conductor):
-
     '''
     Este metodo se encarga de autenticar que se reciba un conductor
     valido para el inicio de sesion.
@@ -79,17 +83,21 @@ def autenticar_conductor(conductor: Conductor):
     if resultado:
         conductorObtenido: Conductor = resultado
 
-        if conductor.contrasena == conductorObtenido.contrasena:
-            return Response(status_code=HTTP_200_OK)
+        llave = cargar_llave()
+        contrasen_obtenida = desencriptar_contenido(
+            conductorObtenido.contrasena.encode(), llave)
         
+        if conductor.contrasena == contrasen_obtenida:
+            return Response(status_code=HTTP_200_OK)
+
         raise HTTPException(status_code=401, detail="Conductor no valido")
-    
-    raise HTTPException(status_code=500, detail="Conductor solicitado no encontrado")
+
+    raise HTTPException(
+        status_code=500, detail="Conductor solicitado no encontrado")
 
 
 @ruta_conductor.put('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def actualizar_conductor(conductor: Conductor, id_conductor: int):
-
     '''
     Ruta para actualizar la informacion de un conductor dado el id del conductor.
 
@@ -101,25 +109,26 @@ def actualizar_conductor(conductor: Conductor, id_conductor: int):
     '''
 
     conexion = conexionDb()
+    conductor.codificar_informacion()
     resultado = conexion.execute(conductores.update().values(
-        idconductor = id_conductor,
-        nombreCompleto = conductor.nombreCompleto,
-        numLicencia = conductor.numLicencia,
-        fechaNacimiento = conductor.fechaNacimiento,
-        telefono = conductor.telefono,
-        contrasena = conductor.contrasena
+        idconductor=id_conductor,
+        nombreCompleto=conductor.nombreCompleto,
+        numLicencia=conductor.numLicencia,
+        fechaNacimiento=conductor.fechaNacimiento,
+        telefono=conductor.telefono,
+        contrasena=conductor.contrasena
     ).where(conductores.c.idconductor == id_conductor))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al actualizar")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al actualizar")
 
 
 @ruta_conductor.delete('/conductor', status_code=HTTP_204_NO_CONTENT, tags=["Conductor"])
 def eliminar_conductor(id_conductor: int):
-
     '''
     Ruta para la eliminacion de un coductor de la base de datos dado el id del conductor.
 
@@ -136,5 +145,6 @@ def eliminar_conductor(id_conductor: int):
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al eliminar conductor")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al eliminar conductor")

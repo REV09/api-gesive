@@ -6,8 +6,8 @@ def obtener_binarios_fotos():
 
     return blob
 
-def crear_foto(datos_foto: bytes):
-    foto_bd = Foto(idfoto=0, data=datos_foto, idReporte=1)
+def crear_foto(datos_foto: bytes, id_reporte: int):
+    foto_bd = Foto(idfoto=0, data=datos_foto, idReporte=id_reporte)
     return foto_bd
 
 

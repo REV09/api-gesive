@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 pagos = Table('pago', meta,
-              Column('idPago', Integer, primary_key=True),
+              Column('idPago', Integer, primary_key=True, autoincrement="auto"),
               Column('idPoliza', Integer),
               Column('idConductor', Integer),
               Column('monto', Float),

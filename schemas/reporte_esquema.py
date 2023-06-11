@@ -5,7 +5,7 @@ from config.db import motor
 meta = MetaData()
 
 reportes = Table('reporte', meta,
-                 Column('idReporte', Integer, primary_key=True),
+                 Column('idReporte', Integer, primary_key=True, autoincrement="auto"),
                  Column('idPoliza', Integer),
                  Column('posicionLat', Float),
                  Column('posicionLon', Float),

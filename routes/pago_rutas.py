@@ -4,13 +4,14 @@ from config.db import conexionDb
 from schemas.pago_esquema import pagos
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from middlewares.verificar_token_rutas import VerificarTokenRutas
+from models.pago import Pago
 
 
 ruta_pagos = APIRouter(route_class=VerificarTokenRutas)
 
+
 @ruta_pagos.get('/pago', response_model=Pago, tags=["Pago"])
 def obtener_pago(id_pago: int):
-
     '''
     Ruta para obtener el pago de una poliza de seguro de un conductor.
 
@@ -25,14 +26,16 @@ def obtener_pago(id_pago: int):
         pagos.c.idPago == id_pago)).first()
     conexion.close()
     if resultado:
-        return resultado
-    
+        pago_obtenido = Pago(idPago=resultado[0], idPoliza=resultado[1], idConductor=resultado[2], monto=resultado[3],
+                             fecha=resultado[4], formaDePago=resultado[5], numeroTarjeta=resultado[6], fechaVencimiento=resultado[7], cvv=resultado[8])
+        pago_obtenido.decodificar_informacion()
+        return pago_obtenido
+
     raise HTTPException(status_code=404, detail="Pago no encontrado")
 
 
 @ruta_pagos.post('/pago', status_code=HTTP_200_OK, tags=["Pago"])
 def agregar_pago(pago: Pago):
-
     '''
     Metodo para agregar un pago de poliza de seguro de un coductor
     a la base de datos .
@@ -43,18 +46,19 @@ def agregar_pago(pago: Pago):
     '''
 
     conexion = conexionDb()
+    pago.codificar_informacion()
     resultado = conexion.execute(pagos.insert().values(pago.dict()))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al registrar Pago")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al registrar Pago")
 
 
 @ruta_pagos.put('/pago', status_code=HTTP_200_OK, tags=["Pago"])
 def actualizar_pago(pago: Pago, id_pago: int):
-
     '''
     Metodo para actualizar un pago de una poliza de seguro de un conductor.
 
@@ -64,28 +68,29 @@ def actualizar_pago(pago: Pago, id_pago: int):
     '''
 
     conexion = conexionDb()
+    pago.codificar_informacion()
     resultado = conexion.execute(pagos.update().values(
-        idPago = id_pago,
-        idPoliza = pago.idPoliza,
-        idConductor = pago.idConductor,
-        monto = pago.monto,
-        fecha = pago.fecha,
-        formaDePago = pago.formaDePago,
-        numeroTarjeta = pago.numeroTarjeta,
-        fechaVencimiento = pago.fechaVencimiento,
-        cvv = pago.cvv
+        idPago=id_pago,
+        idPoliza=pago.idPoliza,
+        idConductor=pago.idConductor,
+        monto=pago.monto,
+        fecha=pago.fecha,
+        formaDePago=pago.formaDePago,
+        numeroTarjeta=pago.numeroTarjeta,
+        fechaVencimiento=pago.fechaVencimiento,
+        cvv=pago.cvv
     ).where(pagos.c.idPago == id_pago))
     conexion.commit()
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_200_OK)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al actualizar Pago")
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al actualizar Pago")
 
 
 @ruta_pagos.delete('/pago', status_code=HTTP_204_NO_CONTENT, tags=["Pago"])
 def eliminar_pago(id_pago: int):
-
     '''
     Metodo para eliminar un pago de una poliza de seguro de un conductor
     de la base de datos.
@@ -102,6 +107,6 @@ def eliminar_pago(id_pago: int):
     conexion.close()
     if resultado:
         return Response(status_code=HTTP_204_NO_CONTENT)
-    
-    raise HTTPException(status_code=500, detail="Error del servidor al eliminar Pago")
- 
+
+    raise HTTPException(
+        status_code=500, detail="Error del servidor al eliminar Pago")

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, UploadFile, File
 from fastapi.responses import Response
 from starlette.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from config.db import conexionDb
@@ -35,7 +35,7 @@ def obtener_foto_reporte(id_foto: int):
 
 
 @ruta_foto.post('/fotos', status_code=HTTP_200_OK, tags=["Foto"])
-def agregar_foto(foto: Foto):
+async def agregar_foto(archivo: UploadFile = File(...), id_reporte: int = 0):
 
     '''
     Metodo para agregar las fotos de un reporte
@@ -45,8 +45,8 @@ def agregar_foto(foto: Foto):
     En caso contrario se retornara un 500
     '''
 
-    #datos = obtener_binarios_fotos()
-    #foto = crear_foto(datos)
+    datos = await archivo.read()
+    foto = crear_foto(datos_foto=datos, id_reporte=id_reporte)
     conexion = conexionDb()
     resultado = conexion.execute(fotos.insert().values(foto.dict()))
     conexion.commit()
