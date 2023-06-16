@@ -36,6 +36,33 @@ def obtener_conductor(id_conductor: int):
     raise HTTPException(status_code=404, detail='Conductor no encontrado')
 
 
+@ruta_conductor.get('/conductor/telefono', response_model=Conductor, tags=["Conductor"])
+def obtener_conductor_por_numero_telefono(numero_telefono: str):
+    '''
+    Ruta para obtener informacion de un conductor especifico dado el numero 
+    de telefono de un conductor.
+
+    El numero del conductor recibido debe ser de tipo string para no producir un error
+    en el servidor.
+
+    En el caso de que la consulta sea exitosa se retornara el conductor encontrado
+    en el caso de que la busqueda sea en vano el servidor retornara un 404 con el
+    mensaje "Conductor no encontrado".
+    '''
+
+    conexion = conexionDb()
+    resultado = conexion.execute(conductores.select().where(
+        conductores.c.telefono == numero_telefono)).first()
+    conexion.close()
+    if resultado:
+        conductorObtenido = Conductor(
+            idconductor=resultado[0], nombreCompleto=resultado[1], numLicencia=resultado[2], fechaNacimiento=resultado[3], telefono=resultado[4], contrasena=resultado[5])
+        conductorObtenido.decodificar_informacion()
+        return conductorObtenido
+
+    raise HTTPException(status_code=404, detail='Conductor no encontrado')
+
+
 @ruta_conductor.post('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def agregar_conductor(conductor: Conductor):
     '''

@@ -36,6 +36,33 @@ def obtener_empleado(id_empleado: int):
     raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
 
+@ruta_empleado.get('/empleado/username', response_model=Empleado, tags=["Empleado"])
+def obtener_empleado_por_username(nombre_usuario: str):
+    '''
+    Ruta para obtener informacion de un empleado especifico dado el nombre 
+    de usuario de un empleado.
+
+    El usuario del empleado recibido debe ser de tipo string para no producir un error
+    en el servidor.
+
+    En el caso de que la consulta sea exitosa se retornara el empleado encontrado
+    en el caso de que la busqueda sea en vano el servidor retornara un 404 con el
+    mensaje "empleado no encontrado".
+    '''
+
+    conexion = conexionDb()
+    resultado = conexion.execute(empleados.select().where(
+        empleados.c.nombreUsuario == nombre_usuario)).first()
+    conexion.close()
+    if resultado:
+        empleadoObtenido = Empleado(
+            idEmpleado=resultado[0], nombreCompleto=resultado[1], fechaIngreso=resultado[2], cargo=resultado[3], nombreUsuario=resultado[4], contrasena=resultado[5])
+        empleadoObtenido.decodificar_informacion()
+        return empleadoObtenido
+
+    raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+
 @ruta_empleado.get('/empleados', response_model=list[Empleado], tags=["Empleado"])
 def obtener_empleados():
     '''

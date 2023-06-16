@@ -2,8 +2,8 @@ from fastapi import APIRouter, Header
 from fastapi.responses import JSONResponse
 from models.empleado import Empleado
 from models.conductor import Conductor
-from routes.empleado_rutas import autenticar_empleado
-from routes.conductor_rutas import autenticar_conductor
+from routes.empleado_rutas import autenticar_empleado, obtener_empleado_por_username
+from routes.conductor_rutas import autenticar_conductor, obtener_conductor_por_numero_telefono
 from security.auth import escribir_token, valida_token
 
 
@@ -24,7 +24,8 @@ def validar_empleado(empleado: Empleado):
     respuesta = autenticar_empleado(empleado)
 
     if (respuesta.status_code == 200):
-        return escribir_token(empleado.dict())
+        datos_empleado = obtener_empleado_por_username(empleado.nombreUsuario)
+        return escribir_token(datos_empleado.dict())
 
     else:
         return JSONResponse(content={"message": "usuario o contraseña no encontrado"}, status_code=404)
@@ -44,7 +45,8 @@ def validar_conductor(conductor: Conductor):
     respuesta = autenticar_conductor(conductor)
 
     if (respuesta.status_code == 200):
-        return escribir_token(conductor.dict())
+        datos_conductor = obtener_conductor_por_numero_telefono(conductor.telefono)
+        return escribir_token(datos_conductor.dict())
 
     else:
         return JSONResponse(content={"message": "usuario o contraseña no encontrado"}, status_code=404)
