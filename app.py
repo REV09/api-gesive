@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from routes.autenticacion_rutas import auth_rutas
-from routes.conductor_rutas import ruta_conductor
+from routes.conductor_rutas import ruta_conductor, ruta_registrar_conductor
 from routes.vehiculo_rutas import ruta_vehiculo
 from routes.empleado_rutas import ruta_empleado
 from routes.pago_rutas import ruta_pagos
@@ -45,4 +45,5 @@ app.include_router(ruta_pagos)
 app.include_router(ruta_poliza)
 app.include_router(ruta_reporte)
 app.include_router(ruta_foto)
+app.include_router(ruta_registrar_conductor)
 load_dotenv()

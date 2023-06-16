@@ -8,6 +8,8 @@ from security.encriptacion import cargar_llave, desencriptar_contenido
 
 ruta_conductor = APIRouter(route_class=VerificarTokenRutas)
 
+ruta_registrar_conductor = APIRouter()
+
 
 @ruta_conductor.get('/conductor', response_model=Conductor, tags=["Conductor"])
 def obtener_conductor(id_conductor: int):
@@ -63,7 +65,7 @@ def obtener_conductor_por_numero_telefono(numero_telefono: str):
     raise HTTPException(status_code=404, detail='Conductor no encontrado')
 
 
-@ruta_conductor.post('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
+@ruta_registrar_conductor.post('/conductor', status_code=HTTP_200_OK, tags=["Conductor"])
 def agregar_conductor(conductor: Conductor):
     '''
     Ruta para agregar un conductor a la base de datos.
