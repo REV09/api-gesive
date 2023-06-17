@@ -115,6 +115,76 @@ def obtener_reportes():
     raise HTTPException(status_code=404, detail="No se encontraron reportes")
 
 
+@ruta_reporte.get('/reportes/pendientes', response_model=list[Reporte], tags=["Reporte"])
+def obtener_reportes_pendientes():
+    '''
+    Metodo para obtener todos los reportes registrados
+    en la base de datos.
+
+    En caso de obtenerlos correctamente retorna una lista de
+    objetos de Reporte.
+
+    En caso contrario retorna un codigo 404
+    '''
+
+    conexion = conexionDb()
+    reportes_obtenidos: list[Reporte] = []
+    resultados = conexion.execute(reportes.select().where(reportes.c.estatus == "Pendiente")).fetchall()
+    conexion.close()
+    if resultados:
+
+        for fila in resultados:
+            reporte_obtenido = Reporte(idReporte=fila[0], idPoliza=fila[1],
+                                       posicionLat=fila[2], posicionLon=fila[3],
+                                       involucradosNombres=fila[4], involucradosVehiculos=fila[5],
+                                       fotos=fila[6], idAjustador=fila[7],
+                                       estatus=fila[8], dictamenTexto=fila[9],
+                                       dictamenFecha=fila[10], dictamenHora=fila[11],
+                                       dictamenFolio=fila[12])
+
+            reporte_obtenido.decodificar_informacion()
+            reportes_obtenidos.append(reporte_obtenido)
+
+        return reportes_obtenidos
+
+    raise HTTPException(status_code=404, detail="No se encontraron reportes")
+
+
+@ruta_reporte.get('/reportes/ajustadorAsignado', response_model=list[Reporte], tags=["Reporte"])
+def obtener_reportes_asignados_ajustador(id_ajustador: int):
+    '''
+    Metodo para obtener todos los reportes registrados
+    en la base de datos.
+
+    En caso de obtenerlos correctamente retorna una lista de
+    objetos de Reporte.
+
+    En caso contrario retorna un codigo 404
+    '''
+
+    conexion = conexionDb()
+    reportes_obtenidos: list[Reporte] = []
+    resultados = conexion.execute(reportes.select().where(reportes.c.idAjustador == id_ajustador)).fetchall()
+    conexion.close()
+    if resultados:
+
+        for fila in resultados:
+            reporte_obtenido = Reporte(idReporte=fila[0], idPoliza=fila[1],
+                                       posicionLat=fila[2], posicionLon=fila[3],
+                                       involucradosNombres=fila[4], involucradosVehiculos=fila[5],
+                                       fotos=fila[6], idAjustador=fila[7],
+                                       estatus=fila[8], dictamenTexto=fila[9],
+                                       dictamenFecha=fila[10], dictamenHora=fila[11],
+                                       dictamenFolio=fila[12])
+
+            reporte_obtenido.decodificar_informacion()
+            reportes_obtenidos.append(reporte_obtenido)
+
+        return reportes_obtenidos
+
+    raise HTTPException(status_code=404, detail="No se encontraron reportes")
+
+
 @ruta_reporte.post('/reporte', status_code=HTTP_200_OK, tags=["Reporte"])
 def agregar_reporte(reporte: Reporte):
     '''
