@@ -40,6 +40,46 @@ def obtener_reporte(id_reporte: int):
     raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
 
+@ruta_reporte.get('/reportes/usuario', response_model=list[Reporte], tags=["Reporte"])
+def obtener_reporte_usuario(id_poliza: int):
+    '''
+    Metodo para obtener un reporte dado el id de reporte el cual
+    debe ser de tipo int
+
+    En caso de encontrar el reporte retorna un objeto de tipo
+    Reporte.
+
+    En caso contrario retorna un codigo 404
+    '''
+
+    conexion = conexionDb()
+    reportes_obtenidos: list[Reporte] = []
+    reportes_usuario: list[Reporte] = []
+    resultados = conexion.execute(reportes.select()).fetchall()
+    conexion.close()
+    if resultados:
+
+        for fila in resultados:
+            reporte_obtenido = Reporte(idReporte=fila[0], idPoliza=fila[1],
+                                       posicionLat=fila[2], posicionLon=fila[3],
+                                       involucradosNombres=fila[4], involucradosVehiculos=fila[5],
+                                       fotos=fila[6], idAjustador=fila[7],
+                                       estatus=fila[8], dictamenTexto=fila[9],
+                                       dictamenFecha=fila[10], dictamenHora=fila[11],
+                                       dictamenFolio=fila[12])
+
+            reporte_obtenido.decodificar_informacion()
+            reportes_obtenidos.append(reporte_obtenido)
+
+        for reporte in reportes_obtenidos:
+            if(reporte.idPoliza == id_poliza):
+                reportes_usuario.append(reporte)
+        
+        return reportes_usuario
+
+    raise HTTPException(status_code=404, detail="Empleado no encontrado")
+
+
 @ruta_reporte.get('/reportes', response_model=list[Reporte], tags=["Reporte"])
 def obtener_reportes():
     '''

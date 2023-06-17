@@ -52,6 +52,27 @@ def obtener_polizas():
     raise HTTPException(status_code=404, detail="No se encontraron polizas")
 
 
+@ruta_poliza.get('/polizas/usuario', response_model=list[Poliza], tags=["Poliza"])
+def obtener_polizas_usuario(id_conductor: int):
+    '''
+    Metodo para obtener todas las polizas registradas de un usuario
+    de la base de datos.
+
+    En caso de obtenerlas correctamente retorna una lista de
+    objetos de Poliza.
+
+    En caso contrario retorna un codigo 404
+    '''
+
+    conexion = conexionDb()
+    resultados = conexion.execute(polizas.select().where(polizas.c.idConductor == id_conductor)).fetchall()
+    conexion.close()
+    if resultados:
+        return resultados
+
+    raise HTTPException(status_code=404, detail="No se encontraron polizas")
+
+
 @ruta_poliza.post('/poliza', status_code=HTTP_200_OK, tags=["Poliza"])
 def agregar_poliza(poliza: Poliza):
     '''
