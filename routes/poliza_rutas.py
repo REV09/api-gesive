@@ -73,6 +73,27 @@ def obtener_polizas_usuario(id_conductor: int):
     raise HTTPException(status_code=404, detail="No se encontraron polizas")
 
 
+@ruta_poliza.get('/polizas/idPoliza', response_model=int, tags=['Poliza'])
+def obtener_poliza_id_vehiculo(id_vehiculo: int):
+    '''
+    Metodo para obtener una poliza de seguro de un coductor
+    dato el id del vehiculo asociado.
+
+    En caso de obtener bien la poliza retorna un codigo 200.
+
+    En caso contrario retorna un codigo 404
+    '''
+
+    conexion = conexionDb()
+    resultado = conexion.execute(polizas.select().where(polizas.c.idVehiculo == id_vehiculo)).first()
+    conexion.close()
+    if resultado:
+        return resultado[0]
+    
+    raise HTTPException(status_code=404, detail="No se encontro la poliza")
+
+
+
 @ruta_poliza.post('/poliza', status_code=HTTP_200_OK, tags=["Poliza"])
 def agregar_poliza(poliza: Poliza):
     '''
