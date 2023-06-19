@@ -37,6 +37,36 @@ def obtener_vehiculo(id_vehiculo: int):
     raise HTTPException(status_code=404, detail="Vehiculo no encontrado")
 
 
+@ruta_vehiculo.get('/vehiculos/conductor', response_model=list[Vehiculo], tags=["Vehiculo"])
+def obtener_vehiculos_conductor(id_conductor: int):
+    '''
+    Ruta para obtener los vehiculos de un coductor dado el id del conductor.
+
+    Recibe el id del conductor de tipo int para la busqueda.
+
+    En caso de encontrar el vehiculo lo retorna, sino retorna un
+    codigo 404
+    '''
+
+    vehiculos_conductor: list[Vehiculo] = []
+    conexion = conexionDb()
+    resultados = conexion.execute(vehiculos.select().where(
+        vehiculos.c.idConductor == id_conductor)).fetchall()
+    conexion.close()
+    if resultados:
+        for fila in resultados:
+            vehiculo_obtenido = Vehiculo(idvehiculo=fila[0], numeroSerie=fila[1],
+                                        anio=fila[2], marca=fila[3],
+                                        modelo=fila[4], color=fila[5],
+                                        numPlacas=fila[6], idConductor=fila[7])
+            vehiculo_obtenido.decodificar_informacion()
+            vehiculos_conductor.append(vehiculo_obtenido)
+
+        return vehiculos_conductor
+
+    raise HTTPException(status_code=404, detail="Vehiculos no encontrados")
+
+
 @ruta_vehiculo.post('/vehiculo', status_code=HTTP_200_OK, tags=["Vehiculo"])
 def agregar_vehiculo(vehiculo: Vehiculo):
     '''

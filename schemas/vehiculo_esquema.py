@@ -11,7 +11,9 @@ vehiculos = Table('vehiculo', meta,
                   Column('marca', String(20)), 
                   Column('modelo', String(20)),
                   Column('color', String(20)),
-                  Column('numPlacas', String(255))) 
+                  Column('numPlacas', String(255)),
+                  Column('idConductor', Integer)
+                  ) 
 
 motorBd = motor()
 meta.create_all(motorBd)

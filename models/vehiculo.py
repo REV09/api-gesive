@@ -10,6 +10,7 @@ class Vehiculo(BaseModel):
     modelo: str
     color: str
     numPlacas: str
+    idConductor: int
 
     class Config:
         orm_mode = True
