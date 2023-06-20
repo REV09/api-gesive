@@ -34,7 +34,7 @@ def obtener_foto_reporte(id_foto: int):
     raise HTTPException(status_code=404, detail="No se encontraron fotos")
 
 
-@ruta_foto.post('/fotos', status_code=HTTP_200_OK, tags=["Foto"])
+@ruta_foto.post('/fotos', response_model=int, tags=["Foto"])
 async def agregar_foto(archivo: UploadFile = File(...), id_reporte: int = 0):
 
     '''
@@ -50,9 +50,11 @@ async def agregar_foto(archivo: UploadFile = File(...), id_reporte: int = 0):
     conexion = conexionDb()
     resultado = conexion.execute(fotos.insert().values(foto.dict()))
     conexion.commit()
+    foto_registrada = conexion.execute(fotos.select()).fetchall()
+    id_foto = foto_registrada[-1][0]
     conexion.close()
     if resultado:
-        return Response(status_code=HTTP_200_OK)
+        return id_foto
     
     raise HTTPException(status_code=500, detail="Error del servidor al guardar la foto")
     
