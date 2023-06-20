@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import date
+from datetime import datetime
 
 from security.encriptacion import cargar_llave, desencriptar_contenido, encriptar_contenido
 
@@ -8,7 +8,7 @@ class Pago(BaseModel):
     idPoliza: int
     idConductor: int
     monto: float
-    fecha: date
+    fecha: datetime
     formaDePago: bool
     numeroTarjeta: str
     fechaVencimiento: str

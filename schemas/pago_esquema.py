@@ -1,5 +1,5 @@
 from sqlalchemy import Table, Column, MetaData
-from sqlalchemy.sql.sqltypes import String, Integer, Float, Date, Boolean
+from sqlalchemy.sql.sqltypes import String, Integer, Float, DateTime, Boolean
 from config.db import motor
 
 meta = MetaData()
@@ -9,7 +9,7 @@ pagos = Table('pago', meta,
               Column('idPoliza', Integer),
               Column('idConductor', Integer),
               Column('monto', Float),
-              Column('fecha', Date),
+              Column('fecha', DateTime),
               Column('formaDePago', Boolean),
               Column('numeroTarjeta', String(255)), 
               Column('fechaVencimiento', String(255)), 
